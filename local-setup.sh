@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+# install virtualenv on linux (only first run)
+#sudo apt install virtualenv
+
 # build a virtual environment and activate it
 virtualenv -p python3 ./venv
 
