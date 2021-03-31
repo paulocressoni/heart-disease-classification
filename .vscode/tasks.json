@@ -1,0 +1,28 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Auto Formatter (Black/Isort/Autoflake)",
+            "command": "./auto-formatter.sh",
+            "type": "shell",
+            "isBackground": true,
+            "args": [
+                "${file}"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "presentation": {
+                "reveal": "always"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "runOptions": {
+                "instanceLimit": 1,
+                "runOn": "default"
+            }
+        }
+    ]
+}

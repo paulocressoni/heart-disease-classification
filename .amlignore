@@ -1,0 +1,7 @@
+venv/
+tmp/
+__pycache__
+.env
+venv
+notebooks
+ml/requirements.txt

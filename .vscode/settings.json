@@ -1,0 +1,23 @@
+{
+    "python.linting.enabled": true,
+    "python.venvFolders": [
+        "./venv"
+    ],
+    "python.analysis.diagnosticMode": "workspace",
+    "python.formatting.provider": "black",
+    "python.languageServer": "Pylance",
+    "python.sortImports.path": "isort",
+    "python.linting.ignorePatterns": [
+        ".vscode/*.py",
+        "**/site-packages/**/*.py",
+        "./venv/*",
+        "./notebooks/*"
+    ],
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "task.autoDetect": "on",
+    "python.pythonPath": "venv/bin/python",
+}
