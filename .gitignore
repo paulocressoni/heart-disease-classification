@@ -2,3 +2,4 @@ venv/
 tmp/
 __pycache__
 .env
+data/*

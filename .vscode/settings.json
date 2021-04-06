@@ -20,4 +20,5 @@
     "editor.formatOnType": true,
     "task.autoDetect": "on",
     "python.pythonPath": "venv/bin/python",
+    "jupyter.jupyterServerType": "local",
 }
