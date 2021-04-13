@@ -50,7 +50,7 @@ def get_pipeline():
     # Pipeline Parameters are passed when submitting the pipeline
     INPUT_TRAINING_FILE_PATH = PipelineParameter(
         name="INPUT_TRAINING_FILE_PATH",
-        default_value="output/**/2021-02-05/*.parquet",
+        default_value="input_data/heart.xls",
     )
 
     # Data to Flow Among Pipeline's Steps

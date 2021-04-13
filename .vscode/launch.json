@@ -16,6 +16,23 @@
             }
         },
         {
+            "name": "Pytest: Current File",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "${file}",
+                "--log-level=INFO",
+                "--log-cli-level=INFO",
+                "--show-capture=all"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceRoot}"
+            }
+        },
+        {
             "name": "Azure Machine Learning - Run",
             "type": "python",
             "request": "launch",
