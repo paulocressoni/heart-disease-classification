@@ -95,6 +95,8 @@ class DatasetPreprocessor:
         },
     }
 
+    target_col = "target"
+
     def get_columns(self, dtypes: array, is_inference: bool):
         """Get the name of the columns that matches the given the types.
 
@@ -205,3 +207,61 @@ class DatasetPreprocessor:
         self.validate_missing_columns(df, is_inference)
         self.validate_datatype_numeric_columns(df, is_inference)
         self.validate_datatype_string_columns(df, is_inference)
+
+    def fit(self, X: pd.DataFrame):
+        """Fit the data to the preprocessor. Creates OneHot Encoders and fit it to the categorical variables.
+        The fit should be used on the training dataset.
+
+        Args:
+            X (pd.DataFrame): Dataset to be fit into the preprocessor.
+        """
+        for c in self.get_columns([str], is_inference=False):
+            self.ohe[c].fit(X[c].values.reshape(-1, 1))
+
+    def transform(self, X: pd.DataFrame, is_inference: bool = False):
+        """Apply the already fit preprocessor to the dataset. Apply the already fit OneHot Encoders to the dataset's
+        categorical variables. Sorts the columns alphabetically.
+
+        Args:
+            X (pd.DataFrame): Dataset to preprocess.
+            is_inference (bool, optional): Set to True when using for inference, and False when using to train a model.
+            Defaults to False.
+
+        Returns:
+            pd.DataFrame: Preprocessed dataset.
+        """
+        # prevents changing input dataframe
+        X = X.copy()
+
+        logger.info("Building pd.DataFrame")
+        X_transformed = None
+
+        for c in self.get_columns([str], is_inference):
+            logger.info(f"OneHot for '{c}'")
+            feat_arr = self.ohe[c].transform(X[c].values.reshape(-1, 1))
+
+            if X_transformed is None:
+                X_transformed = pd.DataFrame(feat_arr)
+                X_transformed.columns = [
+                    "{}_{}".format(c, v.replace(" ", "_"))
+                    for v in self.ohe[c].categories_[0]
+                ]
+
+            else:
+                _X_buff = pd.DataFrame(feat_arr)
+                _X_buff.columns = [
+                    "{}_{}".format(c, v.replace(" ", "_"))
+                    for v in self.ohe[c].categories_[0]
+                ]
+                X_transformed = pd.concat([X_transformed, _X_buff], axis=1)
+
+        logger.info("Concat all columns (numeric + categorical)")
+        X_transformed = pd.concat(
+            [X_transformed, X[self.get_columns([int, np.float64], is_inference)]],
+            axis=1,
+        )
+
+        logger.info("Sorting columns")
+        X_transformed = X_transformed.sort_index(axis=1)
+
+        return X_transformed
