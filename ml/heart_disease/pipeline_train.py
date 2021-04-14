@@ -31,8 +31,7 @@ def get_run_config():
     return aml_helper.get_default_run_config(
         pip_packages=[
             *aml_helper.DEFAULT_PIP_PACKAGES,
-            "imblearn==0.0",
-            "lightgbm==2.3.0",
+            "xgboost==1.3.3",
             "matplotlib==3.2.1",
             "seaborn==0.11.0",
         ]
@@ -62,6 +61,9 @@ def get_pipeline():
     y_train = PipelineData("y_train", datastore=datastore, output_mode="mount")
     X_test = PipelineData("X_test", datastore=datastore, output_mode="mount")
     y_test = PipelineData("y_test", datastore=datastore, output_mode="mount")
+    trained_model = PipelineData(
+        "trained_model", datastore=datastore, output_mode="mount"
+    )
 
     # Pipeline steps
     step_validate_data = PythonScriptStep(
@@ -106,9 +108,30 @@ def get_pipeline():
         params=aml_helper.get_default_step_params(),
     )
 
+    step_train_model = PythonScriptStep(
+        name="step_train_model",
+        script_name="./ml/heart_disease/step_train_model.py",
+        compute_target=compute_target,
+        arguments=[
+            "--X_train",
+            X_train,
+            "--y_train",
+            y_train,
+            "--trained_model",
+            trained_model,
+        ],
+        inputs=[X_train, y_train],
+        outputs=[trained_model],
+        allow_reuse=False,
+        runconfig=run_config,
+        params=aml_helper.get_default_step_params(),
+    )
+
     pipeline = Pipeline(
         workspace=aml_helper.ws,
-        steps=StepSequence(steps=[step_validate_data, step_preprocess_data]),
+        steps=StepSequence(
+            steps=[step_validate_data, step_preprocess_data, step_train_model]
+        ),
     )
     return pipeline
 
