@@ -70,6 +70,10 @@ class DatasetPreprocessor:
 
     """
 
+    target_col = "target"
+
+    target_col_description = ["No disease", "Yes disease"]
+
     base_schema = {
         "age": int,
         "sex": str,
@@ -91,11 +95,9 @@ class DatasetPreprocessor:
     train_schema = {
         **base_schema,
         **{
-            "target": int,
+            target_col: int,
         },
     }
-
-    target_col = "target"
 
     def get_columns(self, dtypes: array, is_inference: bool):
         """Get the name of the columns that matches the given the types.

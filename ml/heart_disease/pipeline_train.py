@@ -64,6 +64,7 @@ def get_pipeline():
     trained_model = PipelineData(
         "trained_model", datastore=datastore, output_mode="mount"
     )
+    model_score = PipelineData("model_score", datastore=datastore, output_mode="mount")
 
     # Pipeline steps
     step_validate_data = PythonScriptStep(
@@ -127,10 +128,36 @@ def get_pipeline():
         params=aml_helper.get_default_step_params(),
     )
 
+    step_evaluate_model = PythonScriptStep(
+        name="step_evaluate_model",
+        script_name="./ml/heart_disease/step_evaluate_model.py",
+        compute_target=compute_target,
+        arguments=[
+            "--X_test",
+            X_test,
+            "--y_test",
+            y_test,
+            "--trained_model",
+            trained_model,
+            "--model_score",
+            model_score,
+        ],
+        inputs=[X_test, y_test, trained_model],
+        outputs=[model_score],
+        allow_reuse=False,
+        runconfig=run_config,
+        params=aml_helper.get_default_step_params(),
+    )
+
     pipeline = Pipeline(
         workspace=aml_helper.ws,
         steps=StepSequence(
-            steps=[step_validate_data, step_preprocess_data, step_train_model]
+            steps=[
+                step_validate_data,
+                step_preprocess_data,
+                step_train_model,
+                step_evaluate_model,
+            ]
         ),
     )
     return pipeline
