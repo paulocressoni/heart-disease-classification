@@ -149,6 +149,25 @@ def get_pipeline():
         params=aml_helper.get_default_step_params(),
     )
 
+    step_compare_models = PythonScriptStep(
+        name="step_compare_models",
+        script_name="./ml/heart_disease/step_compare_models.py",
+        compute_target=compute_target,
+        arguments=[
+            "--X_test",
+            X_test,
+            "--y_test",
+            y_test,
+            "--trained_model",
+            trained_model,
+        ],
+        inputs=[X_test, y_test, trained_model],
+        outputs=[],
+        allow_reuse=False,
+        runconfig=run_config,
+        params=aml_helper.get_default_step_params(),
+    )
+
     pipeline = Pipeline(
         workspace=aml_helper.ws,
         steps=StepSequence(
@@ -156,7 +175,7 @@ def get_pipeline():
                 step_validate_data,
                 step_preprocess_data,
                 step_train_model,
-                step_evaluate_model,
+                [step_evaluate_model, step_compare_models],
             ]
         ),
     )

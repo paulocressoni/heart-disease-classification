@@ -263,7 +263,7 @@ class AmlCustomHelper:
         min_nodes: int = 1,
         max_nodes: int = 4,
     ):
-        """Criar ou retornar AzureML compute target
+        """Gets a AzureML compute target. Creates it if it does not exists.
 
         Args:
             aml_compute_target_name (str): Name of the compute cluster|instance|other
