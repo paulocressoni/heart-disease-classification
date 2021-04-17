@@ -2,6 +2,8 @@ venv/
 tmp/
 __pycache__
 .env
-data/*venv
+data/*
+*/assets/*venv
 notebooks
+ml/assets
 ml/requirements.txt

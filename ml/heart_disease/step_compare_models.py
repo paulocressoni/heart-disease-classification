@@ -35,11 +35,16 @@ def compare_models(
         # download old model
         logger.info("Download old model")
         old_model_aml = Model(aml_helper.ws, MODEL_NAME)
-        old_model_aml.download(target_dir=".", exist_ok=True)
+
+        logger.info(f"aml_helper.ASSETS_DIR:\t{aml_helper.ASSETS_DIR}")
+        old_model_aml.download(
+            target_dir=f"{'/'.join(aml_helper.ASSETS_DIR.split('/')[0:-1])}",
+            exist_ok=True,
+        )
 
         # load old model
         logger.info("Load old model")
-        old_model = joblib.load(f"{aml_helper.ASSETS_DIR}/{MODEL_NAME}")
+        old_model = joblib.load(f"{aml_helper.ASSETS_DIR}/{model_path.split('/')[-1]}")
         logger.info(f"Old Model:\t{old_model}")
 
         # load new model
@@ -66,6 +71,8 @@ def compare_models(
         logger.info("Calculates Recall")
         recall_old = recall_score(y_test, y_hat_old)
         recall_new = recall_score(y_test, y_hat_new)
+        logger.info(f"Old model recall:\t{recall_old}")
+        logger.info(f"New model recall:\t{recall_new}")
 
         if recall_old > recall_new:
             # force to fail the AzureML pipeline step

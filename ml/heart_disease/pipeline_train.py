@@ -54,9 +54,11 @@ def get_pipeline():
 
     # Data to Flow Among Pipeline's Steps
     preprocessor_path = PipelineData(
-        "preprocessor_path", datastore=datastore, output_mode="mount"
+        "preprocessor_fit", datastore=datastore, output_mode="mount"
     )
-    labels_path = PipelineData("labels_path", datastore=datastore, output_mode="mount")
+    labels_path = PipelineData(
+        "labels_description", datastore=datastore, output_mode="mount"
+    )
     X_train = PipelineData("X_train", datastore=datastore, output_mode="mount")
     y_train = PipelineData("y_train", datastore=datastore, output_mode="mount")
     X_test = PipelineData("X_test", datastore=datastore, output_mode="mount")
@@ -168,6 +170,27 @@ def get_pipeline():
         params=aml_helper.get_default_step_params(),
     )
 
+    step_register_model = PythonScriptStep(
+        name="step_register_model",
+        script_name="./ml/heart_disease/step_register_model.py",
+        compute_target=compute_target,
+        arguments=[
+            "--trained_model",
+            trained_model,
+            "--model_score",
+            model_score,
+            "--preprocessor_fit",
+            preprocessor_path,
+            "--labels_path",
+            labels_path,
+        ],
+        inputs=[trained_model, model_score, preprocessor_path, labels_path],
+        outputs=[],
+        allow_reuse=False,
+        runconfig=run_config,
+        params=aml_helper.get_default_step_params(),
+    )
+
     pipeline = Pipeline(
         workspace=aml_helper.ws,
         steps=StepSequence(
@@ -176,6 +199,7 @@ def get_pipeline():
                 step_preprocess_data,
                 step_train_model,
                 [step_evaluate_model, step_compare_models],
+                step_register_model,
             ]
         ),
     )

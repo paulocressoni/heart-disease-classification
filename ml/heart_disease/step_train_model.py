@@ -44,7 +44,7 @@ def train_model(
     logger.info(f"XGBClassifier model:\t{model_clf}")
 
     # persist the trained model
-    logger.info("Persist the model sklearn pipeline")
+    logger.info("Persist the model")
     joblib.dump(model_clf, output_model_path)
 
 
