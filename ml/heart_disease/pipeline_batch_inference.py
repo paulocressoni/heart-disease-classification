@@ -52,9 +52,6 @@ def get_pipeline():
     preprocessed_dataset = PipelineData(
         "preprocessed_dataset", datastore=datastore, output_mode="mount"
     )
-    original_dataset = PipelineData(
-        "original_dataset", datastore=datastore, output_mode="mount"
-    )
 
     # Pipeline steps
     step_validate_inference_data = PythonScriptStep(
@@ -72,12 +69,27 @@ def get_pipeline():
         params=aml_helper.get_default_step_params(),
     )
 
+    step_preprocess_infer_data = PythonScriptStep(
+        name="step_preprocess_infer_data",
+        script_name="./ml/heart_disease/step_preprocess_infer_data.py",
+        compute_target=compute_target,
+        arguments=[
+            "--input_file_path",
+            INPUT_FILE_PATH,
+            "--transformed_data_path",
+            preprocessed_dataset,
+        ],
+        inputs=[],
+        outputs=[preprocessed_dataset],
+        allow_reuse=False,
+        runconfig=run_config,
+        params=aml_helper.get_default_step_params(),
+    )
+
     pipeline = Pipeline(
         workspace=aml_helper.ws,
         steps=StepSequence(
-            steps=[
-                step_validate_inference_data,
-            ]
+            steps=[step_validate_inference_data, step_preprocess_infer_data]
         ),
     )
     return pipeline

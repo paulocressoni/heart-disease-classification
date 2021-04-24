@@ -19,9 +19,7 @@ def preprocess_input_data(
     output_data_y_test: str,
 ):
     """Prepare the data for the model training and model evaluation. Fit a preprocessor (for later use when inferencing)
-    and applies it to the dataset to format it to the expected input for the model. The full dataset is then balanced
-    and used later for the model training. The train split is also balanced. The test split is NOT balanced, thus it is
-    used to score the later model created with the train split.
+    and applies it to the dataset to transform it to the expected input for the model.
 
     Args:
         input_file_path (str): Path to the input file to be loaded.

@@ -17,6 +17,10 @@ from ml.heart_disease.constants import (
     EXPERIMENT_NAME_TRAIN,
     PIPELINE_DESCRIPTION_TRAIN,
     PIPELINE_NAME_TRAIN,
+    MODEL_NAME,
+    PREPROCESSOR_NAME,
+    SCORE_NAME,
+    LABELS_NAME,
 )
 
 SOURCE_PATH = "/".join(os.path.dirname(os.path.realpath(__file__)).split("/"))
@@ -50,19 +54,15 @@ def get_pipeline():
 
     # Data to Flow Among Pipeline's Steps
     preprocessor_path = PipelineData(
-        "preprocessor_fit", datastore=datastore, output_mode="mount"
+        PREPROCESSOR_NAME, datastore=datastore, output_mode="mount"
     )
-    labels_path = PipelineData(
-        "labels_description", datastore=datastore, output_mode="mount"
-    )
+    labels_path = PipelineData(LABELS_NAME, datastore=datastore, output_mode="mount")
     X_train = PipelineData("X_train", datastore=datastore, output_mode="mount")
     y_train = PipelineData("y_train", datastore=datastore, output_mode="mount")
     X_test = PipelineData("X_test", datastore=datastore, output_mode="mount")
     y_test = PipelineData("y_test", datastore=datastore, output_mode="mount")
-    trained_model = PipelineData(
-        "trained_model", datastore=datastore, output_mode="mount"
-    )
-    model_score = PipelineData("model_score", datastore=datastore, output_mode="mount")
+    trained_model = PipelineData(MODEL_NAME, datastore=datastore, output_mode="mount")
+    model_score = PipelineData(SCORE_NAME, datastore=datastore, output_mode="mount")
 
     # Pipeline steps
     step_validate_data = PythonScriptStep(
