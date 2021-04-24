@@ -15,12 +15,8 @@ from azureml.pipeline.steps.python_script_step import PythonScriptStep
 from ml.helpers.aml import AmlCustomHelper
 from ml.heart_disease.constants import (
     EXPERIMENT_NAME_TRAIN,
-    LABELS_NAME,
-    MODEL_NAME,
     PIPELINE_DESCRIPTION_TRAIN,
     PIPELINE_NAME_TRAIN,
-    PREPROCESSOR_NAME,
-    SCORE_NAME,
 )
 
 SOURCE_PATH = "/".join(os.path.dirname(os.path.realpath(__file__)).split("/"))

@@ -16,6 +16,9 @@ The **Data Validation** validates the training data, checking for missing column
 
 ![AzureML train pipeline](./images/AzureML_training_pipeline.png "AzureML Train Pipeline")
 
+## Batch Inference pipeline
+TBD
+
 ## Setup the environment
 
 Execute the script `local-setup.sh` to make the automated local setup. Execute the lines of code on the path of your project folder on Linux. Replace `YOUR-AZURE-SUBSCRIPTION` with your Azure subscription:
