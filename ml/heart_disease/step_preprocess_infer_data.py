@@ -54,8 +54,7 @@ def transform_infer_data(
 
 
 def preprocess_input_data(
-    input_file_path: str,
-    transformed_data_path: str,
+    input_file_path: str, transformed_data_path: str, original_data_path: str
 ):
     """Preprocess the dataset making it ready for inference. The preprocessor is loaded
     from model assets and it's transformation is applied to the dataset so it could be
@@ -64,6 +63,7 @@ def preprocess_input_data(
     Args:
         input_file_path (str): Path to the input file to be loaded.
         transformed_data_path (str): Path to persist transformed data.
+        original_data_path (str): Path to persist original data.
     """
     # get datastore
     aml_helper = AmlCustomHelper()
@@ -104,6 +104,10 @@ def preprocess_input_data(
     logger.info("Persist the transformed dataset")
     transformed_data.to_parquet(transformed_data_path)
 
+    # save original data
+    logger.info("Persist the original dataset")
+    df_data.to_parquet(original_data_path)
+
 
 if __name__ == "__main__":
 
@@ -118,9 +122,15 @@ if __name__ == "__main__":
         type=str,
         default="./data/tmp/transformed_data",
     )
+    parser.add_argument(
+        "--original_data_path",
+        type=str,
+        default="./data/tmp/original_data",
+    )
     args = parser.parse_args()
 
     preprocess_input_data(
         args.input_file_path,
         args.transformed_data_path,
+        args.original_data_path,
     )

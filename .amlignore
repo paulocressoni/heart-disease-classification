@@ -5,4 +5,5 @@ __pycache__
 data/*
 */assets/*venv
 notebooks
+ml/assets
 ml/requirements.txt

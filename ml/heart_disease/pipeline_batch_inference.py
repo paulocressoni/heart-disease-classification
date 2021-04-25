@@ -49,6 +49,9 @@ def get_pipeline():
     )
 
     # Data to Flow Among Pipeline's Steps
+    original_dataset = PipelineData(
+        "original_dataset", datastore=datastore, output_mode="mount"
+    )
     preprocessed_dataset = PipelineData(
         "preprocessed_dataset", datastore=datastore, output_mode="mount"
     )
@@ -78,9 +81,11 @@ def get_pipeline():
             INPUT_FILE_PATH,
             "--transformed_data_path",
             preprocessed_dataset,
+            "--original_data_path",
+            original_dataset,
         ],
         inputs=[],
-        outputs=[preprocessed_dataset],
+        outputs=[preprocessed_dataset, original_dataset],
         allow_reuse=False,
         runconfig=run_config,
         params=aml_helper.get_default_step_params(),
