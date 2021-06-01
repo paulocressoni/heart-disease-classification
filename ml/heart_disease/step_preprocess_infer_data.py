@@ -17,7 +17,7 @@ from ml.heart_disease.constants import MODEL_NAME, PREPROCESSOR_NAME
 
 def transform_infer_data(
     dataset: pd.DataFrame, aml_model_name: str, preprocessor_name: str
-):
+) -> pd.DataFrame:
     """Transform the dataset for inference. Downloads the registered Model on AzureML and load the already
     fit preprocessor to use for the data transformation.
 
@@ -25,10 +25,13 @@ def transform_infer_data(
         dataset (pd.DataFrame): Dataset to transform.
         aml_model_name (str): The name of the Model registered on AzureML.
         preprocessor_name (str): The name of the preprocessor registered with the Model's assets on AzureML.
+
+    Returns:
+        (pd.DataFrame): The preprocessor's transformations applied to the dataframe.
     """
     aml_helper = AmlCustomHelper()
     try:
-        # download old model
+        # download registered model and assets
         logger.info("Download aml model")
         aml_model = Model(aml_helper.ws, aml_model_name)
 
@@ -38,7 +41,7 @@ def transform_infer_data(
             exist_ok=True,
         )
 
-        # load old model
+        # load preprocessor object from model assets
         logger.info("Load aml model's preprocessor")
         preprocessor = joblib.load(f"{aml_helper.ASSETS_DIR}/{preprocessor_name}")
 
@@ -99,6 +102,10 @@ def preprocess_input_data(
 
     # transform dataset
     transformed_data = transform_infer_data(df_data, MODEL_NAME, PREPROCESSOR_NAME)
+
+    logger.info(f"Preprocessed data shape:\t{transformed_data.shape}")
+    logger.info(f"Preprocessed data info:\t{transformed_data.info()}")
+    logger.info(f"Preprocessed data first rows:\t{transformed_data.head(5)}")
 
     # save transformed dataset to parquet
     logger.info("Persist the transformed dataset")

@@ -48,6 +48,11 @@ def get_pipeline():
         default_value="infer_data/dataset_to_infer.parquet",
     )
 
+    OUTPUT_FILE_PATH = PipelineParameter(
+        name="OUTPUT_FILE_PATH",
+        default_value="infer_data/results/",
+    )
+
     # Data to Flow Among Pipeline's Steps
     original_dataset = PipelineData(
         "original_dataset", datastore=datastore, output_mode="mount"
@@ -55,9 +60,7 @@ def get_pipeline():
     preprocessed_dataset = PipelineData(
         "preprocessed_dataset", datastore=datastore, output_mode="mount"
     )
-    inference = PipelineData(
-        "inference", datastore=datastore, output_mode="mount"
-    )
+    inference = PipelineData("inference", datastore=datastore, output_mode="mount")
 
     # Pipeline steps
     step_validate_inference_data = PythonScriptStep(
@@ -101,11 +104,30 @@ def get_pipeline():
         arguments=[
             "--transformed_data_path",
             preprocessed_dataset,
+            "--original_data_path",
+            original_dataset,
             "--inference_path",
             inference,
         ],
-        inputs=[preprocessed_dataset],
+        inputs=[preprocessed_dataset, original_dataset],
         outputs=[inference],
+        allow_reuse=False,
+        runconfig=run_config,
+        params=aml_helper.get_default_step_params(),
+    )
+
+    step_persist_result = PythonScriptStep(
+        name="step_persist_result",
+        script_name="./ml/heart_disease/step_persist_result.py",
+        compute_target=compute_target,
+        arguments=[
+            "--inference_path",
+            inference,
+            "--output_file_path",
+            OUTPUT_FILE_PATH,
+        ],
+        inputs=[inference],
+        outputs=[],
         allow_reuse=False,
         runconfig=run_config,
         params=aml_helper.get_default_step_params(),
@@ -118,6 +140,7 @@ def get_pipeline():
                 step_validate_inference_data,
                 step_preprocess_infer_data,
                 step_batch_inference,
+                step_persist_result,
             ]
         ),
     )

@@ -40,6 +40,7 @@ def validate_input_data(input_file_path: str):
     }
 
     # Create a TabularDataset to represent tabular data in delimited files
+    # read the file located on the datastore provided
     df_data = Dataset.Tabular.from_parquet_files(
         path=[(datastore, input_file_path)], set_column_types=data_types
     ).to_pandas_dataframe()
