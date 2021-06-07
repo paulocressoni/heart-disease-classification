@@ -16,6 +16,18 @@ The **Data Validation** validates the training data, checking for missing column
 
 ![AzureML train pipeline](./images/AzureML_training_pipeline.png "AzureML Train Pipeline")
 
+## Batch Inference pipeline
+The batch inference pipeline is composed of 4 steps:
+1. Data validation
+2. Data preparation
+3. Batch inference
+4. Persist inference
+
+The **Data Validation** validates the data to be inferred, checking for missing columns and data types. The **Data Preparation** downloads the model assets and use the fit preprocessor registered to preprocess the data. The **Batch Inference** downloads the model and make predictions. The **Persist Inference** saves the outputs to a specific path.
+
+![AzureML batch inference pipeline](./images/AzureML_batch_inference_pipeline.png "AzureML Batch Inference Pipeline")
+
+
 ## Setup the environment
 
 Execute the script `local-setup.sh` to make the automated local setup. Execute the lines of code on the path of your project folder on Linux. Replace `YOUR-AZURE-SUBSCRIPTION` with your Azure subscription:
@@ -45,3 +57,29 @@ Then execute the commands:
 If you're using the VSCode IDE, there are some configurations ready for you to use, like the laucher to run, test local files as well as to validate, run and deploy AzureML pipelines on Azure.
 
 ![AzureML train pipeline](./images/VSCode_launcher.png "VSCode launcher for AzureML")
+
+To execute without the laucher make sure you've activated the venv before running the pipelines.
+
+For example:
+```
+# activate the virtual environment
+. ./venv/bin/activate
+
+# run training pipeline validation
+~/your-path/heart-disease-classifier/ml/heart_disease/pipeline_train.py --validate
+
+# run training pipeline experiment
+~/your-path/heart-disease-classifier/ml/heart_disease/pipeline_train.py --run
+
+# deploy training pipeline
+~/your-path/heart-disease-classifier/ml/heart_disease/pipeline_train.py --deploy
+
+# run inference pipeline validation
+~/your-path/heart-disease-classifier/ml/heart_disease/pipeline_batch_inference.py --validate
+
+# run inference pipeline experiment
+~/your-path/heart-disease-classifier/ml/heart_disease/pipeline_batch_inference.py --run
+
+# deploy inference pipeline
+~/your-path/heart-disease-classifier/ml/heart_disease/pipeline_batch_inference.py --deploy
+```
